@@ -4,9 +4,12 @@ plugins {
     id 'checkstyle'
     id 'application'
     id "com.adarshr.test-logger" version "4.0.0"
+    id("io.freefair.lombok") version "8.4"
 
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'com.github.ben-manes.versions' version '0.41.0'
+
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 group = 'hexlet.code'
@@ -21,6 +24,14 @@ compileJava {
 }
 
 dependencies {
+    implementation 'io.javalin:javalin:6.0.1'
+    implementation 'io.javalin:javalin-bundle:6.0.1'
+    implementation 'io.javalin:javalin-rendering:6.0.1'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.12'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -34,13 +45,13 @@ testlogger {
     slowThreshold 5000
 }
 
-//applicaion {
-//    mainClass = ...
-//}
+application {
+    mainClass = 'hexlet.code.App'
+}
 
-//run {
-//    standardInput = System.in
-//}
+run {
+    standardInput = System.in
+}
 
 jacoco {
     toolVersion = "0.8.11"

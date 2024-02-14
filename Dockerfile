@@ -2,15 +2,9 @@ FROM eclipse-temurin:20-jdk
 
 WORKDIR /app
 
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradlew .
+COPY /app .
 
 RUN ./gradlew --no-daemon dependencies
-
-COPY src src
-COPY config config
 
 RUN ./gradlew --no-daemon build
 

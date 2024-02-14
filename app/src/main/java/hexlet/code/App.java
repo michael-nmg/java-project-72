@@ -23,4 +23,3 @@ public class App {
         getApp().start(getPort());
     }
 }
-    

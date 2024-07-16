@@ -18,3 +18,6 @@ build:
 
 clean:
 	@./gradlew clean
+
+run:
+	@./gradlew run

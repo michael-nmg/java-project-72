@@ -1,18 +1,24 @@
 package hexlet.code;
 
+import hexlet.code.controller.RootController;
 import hexlet.code.repository.BaseRepository;
 
-import io.javalin.Javalin;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import lombok.extern.slf4j.Slf4j;
+import io.javalin.Javalin;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
+import io.javalin.rendering.template.JavalinJte;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class App {
@@ -33,11 +39,19 @@ public class App {
 
         initDataBase(dataSource);
 
-        var app = Javalin.create(config ->
-                config.bundledPlugins.enableDevLogging());
+        var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte(createTemplateEngine()));
+        });
 
-        app.get(RoutNames.root(), context -> context.result("it's work"));
+        app.get(RoutNames.rootPath(), RootController::index);
         return app;
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
     private static void initDataBase(HikariDataSource dataSource) throws SQLException, IOException {

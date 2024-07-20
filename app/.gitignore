@@ -35,6 +35,9 @@ bin/
 /nbdist/
 /.nb-gradle/
 
+### JTE ###
+jte-classes/
+
 ### VS Code ###
 .vscode/
 

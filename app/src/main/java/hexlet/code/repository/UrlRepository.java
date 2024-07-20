@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.ArrayList;
 
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.SQLException;
 
 public class UrlRepository extends BaseRepository {
@@ -17,7 +16,7 @@ public class UrlRepository extends BaseRepository {
 
         try (var connection = dataSource.getConnection();
              var state = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            var timestamp = Timestamp.valueOf(url.getCreatedAt());
+            var timestamp = url.getCreatedAt();
             state.setString(1, url.getName());
             state.setTimestamp(2, timestamp);
             state.executeUpdate();
@@ -42,7 +41,24 @@ public class UrlRepository extends BaseRepository {
             var result = state.executeQuery();
             if (result.next()) {
                 var id = result.getLong("id");
-                var createdAt = result.getTimestamp("created_at").toLocalDateTime();
+                var createdAt = result.getTimestamp("created_at");
+                var url = new Url(id, name, createdAt);
+                return Optional.of(url);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Url> findById(Long id) throws SQLException {
+        var query = "SELECT id, name, created_at FROM urls WHERE id = ?";
+
+        try (var connection = dataSource.getConnection();
+             var state = connection.prepareStatement(query)) {
+            state.setLong(1, id);
+            var result = state.executeQuery();
+            if (result.next()) {
+                var name = result.getString("name");
+                var createdAt = result.getTimestamp("created_at");
                 var url = new Url(id, name, createdAt);
                 return Optional.of(url);
             }
@@ -61,7 +77,7 @@ public class UrlRepository extends BaseRepository {
             while (result.next()) {
                 var id = result.getLong("id");
                 var name = result.getString("name");
-                var createdAt = result.getTimestamp("created_at").toLocalDateTime();
+                var createdAt = result.getTimestamp("created_at");
                 var url = new Url(id, name, createdAt);
                 urls.add(url);
             }

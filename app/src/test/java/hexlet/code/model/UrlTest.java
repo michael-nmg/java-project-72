@@ -3,6 +3,7 @@ package hexlet.code.model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +15,7 @@ class UrlTest {
 
     @BeforeEach
     public void init() {
-        url = new Url(1L, "name", LocalDateTime.MIN);
+        url = new Url(1L, "name", Timestamp.valueOf(LocalDateTime.MIN));
     }
 
     @Test
@@ -29,7 +30,9 @@ class UrlTest {
 
     @Test
     void getCreatedAt() {
-        assertEquals(LocalDateTime.MIN, url.getCreatedAt());
+        var expected = Timestamp.valueOf(LocalDateTime.MIN);
+        var actual = url.getCreatedAt();
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -46,7 +49,7 @@ class UrlTest {
 
     @Test
     void setCreatedAt() {
-        var now = LocalDateTime.now();
+        var now = Timestamp.valueOf(LocalDateTime.now());
         url.setCreatedAt(now);
         assertEquals(now, url.getCreatedAt());
     }
@@ -58,14 +61,17 @@ class UrlTest {
 
     @Test
     void notEquals() {
-        var actual = new Url(2L, "name2", LocalDateTime.now());
+        var now = Timestamp.valueOf(LocalDateTime.now());
+        var actual = new Url(2L, "name2", now);
         assertNotEquals(url, actual);
     }
 
     @Test
     void hashCodeEquals() {
-        var actual = new Url(1L, "name", LocalDateTime.MIN).hashCode();
+        var createdAt = Timestamp.valueOf(LocalDateTime.MIN);
+        var actual = new Url(1L, "name", createdAt).hashCode();
         var expected = url.hashCode();
         assertEquals(expected, actual);
     }
+
 }

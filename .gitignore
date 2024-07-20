@@ -11,4 +11,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+./app/jte-classes/
+
+### JTE ###
+jte-classes/
 

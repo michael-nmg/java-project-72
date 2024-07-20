@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -14,18 +15,22 @@ import io.javalin.rendering.template.JavalinJte;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+
+import hexlet.code.util.RoutNames;
+
+import static hexlet.code.util.Util.getPort;
+import static hexlet.code.util.Util.getLinkDB;
+import static hexlet.code.util.Util.readResourceFile;
+
 
 @Slf4j
 public class App {
 
-    public static final String DB_NAME = "project";
+    public static final String SQL_FILE = "schema.sql";
     public static final String DB_ENV = "JDBC_DATABASE_URL";
-    public static final String DB_H2 = "jdbc:h2:mem:%s;DB_CLOSE_DELAY=-1;";
+    public static final String DB_H2 = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;";
 
     public static void main(String[] args) throws SQLException, IOException {
         getApp().start(getPort());
@@ -33,11 +38,16 @@ public class App {
 
     public static Javalin getApp() throws SQLException, IOException {
         HikariConfig hikari = new HikariConfig();
-        hikari.setJdbcUrl(getLinkDB());
+        hikari.setJdbcUrl(getLinkDB(DB_ENV, DB_H2));
+        var createTable = readResourceFile(SQL_FILE, App.class);
+
         HikariDataSource dataSource = new HikariDataSource(hikari);
         BaseRepository.dataSource = dataSource;
 
-        initDataBase(dataSource);
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(createTable);
+        }
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
@@ -45,6 +55,10 @@ public class App {
         });
 
         app.get(RoutNames.rootPath(), RootController::index);
+        app.get(RoutNames.urlsPath(), UrlsController::index);
+        app.get(RoutNames.urlPath("{id}"), UrlsController::show);
+
+        app.post(RoutNames.urlsPath(), UrlsController::save);
         return app;
     }
 
@@ -52,37 +66,6 @@ public class App {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
         return TemplateEngine.create(codeResolver, ContentType.Html);
-    }
-
-    private static void initDataBase(HikariDataSource dataSource) throws SQLException, IOException {
-        var sql = readResourceFile("schema.sql");
-
-        try (var connection = dataSource.getConnection();
-             var statement = connection.createStatement()) {
-            statement.execute(sql);
-        }
-    }
-
-    private static String readResourceFile(String filename) throws IOException {
-        var url = App.class.getClassLoader().getResourceAsStream(filename);
-
-        if (url == null) {
-            throw new IOException("Undefined schema database");
-        }
-
-        try (var buffer = new BufferedReader(new InputStreamReader(url))) {
-            return buffer.lines().collect(Collectors.joining("\n"));
-        }
-    }
-
-    private static int getPort() {
-        var port = System.getenv().getOrDefault("PORT", "7070");
-        return Integer.parseInt(port);
-    }
-
-    private static String getLinkDB() {
-        var h2Url = String.format(DB_H2, DB_NAME);
-        return System.getenv().getOrDefault(DB_ENV, h2Url);
     }
 
 }

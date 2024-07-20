@@ -1,9 +1,9 @@
--- PSQL syntax
+-- H2 syntax
 DROP TABLE IF EXISTS urls;
 
 CREATE TABLE urls
 (
-    id         BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id         INT PRIMARY KEY AUTO_INCREMENT,
     name       VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP           NOT NULL
 );

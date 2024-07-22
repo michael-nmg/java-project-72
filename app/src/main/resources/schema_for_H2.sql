@@ -1,7 +1,8 @@
 -- H2 syntax
 DROP TABLE IF EXISTS urls;
-CREATE SEQUENCE url_seq;
+DROP SEQUENCE IF EXISTS url_seq;
 
+CREATE SEQUENCE url_seq;
 CREATE TABLE urls
 (
     id         INT DEFAULT NEXT VALUE FOR url_seq NOT NULL,

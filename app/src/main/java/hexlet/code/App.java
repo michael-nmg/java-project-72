@@ -22,6 +22,7 @@ import hexlet.code.util.RoutNames;
 
 import static hexlet.code.util.Util.getPort;
 import static hexlet.code.util.Util.getLinkDB;
+import static hexlet.code.util.Util.getSqlFile;
 import static hexlet.code.util.Util.readResourceFile;
 
 
@@ -29,6 +30,7 @@ import static hexlet.code.util.Util.readResourceFile;
 public class App {
 
     public static final String SQL_FILE = "schema.sql";
+    public static final String SQL_FILE_H2 = "schema_for_H2.sql";
     public static final String DB_ENV = "JDBC_DATABASE_URL";
     public static final String DB_H2 = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;";
 
@@ -39,7 +41,8 @@ public class App {
     public static Javalin getApp() throws SQLException, IOException {
         HikariConfig hikari = new HikariConfig();
         hikari.setJdbcUrl(getLinkDB(DB_ENV, DB_H2));
-        var createTable = readResourceFile(SQL_FILE, App.class);
+        var filename = getSqlFile(DB_ENV, SQL_FILE, SQL_FILE_H2);
+        var createTable = readResourceFile(filename, App.class);
 
         HikariDataSource dataSource = new HikariDataSource(hikari);
         BaseRepository.dataSource = dataSource;

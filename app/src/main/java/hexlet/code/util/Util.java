@@ -23,6 +23,10 @@ public final class Util {
         return Integer.parseInt(port);
     }
 
+    public static String getSqlFile(String env, String first, String second) {
+        return System.getenv().containsKey(env) ? first : second;
+    }
+
     public static <T> String readResourceFile(String filename, Class<T> clazz) throws IOException {
         var url = clazz.getClassLoader().getResourceAsStream(filename);
 

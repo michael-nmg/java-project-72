@@ -39,10 +39,12 @@ public class App {
     }
 
     public static Javalin getApp() throws SQLException, IOException {
-        HikariConfig hikari = new HikariConfig();
-        hikari.setJdbcUrl(getLinkDB(DB_ENV, DB_H2));
-        var filename = getSqlFile(DB_ENV, SQL_FILE, SQL_FILE_H2);
+        var urlDb = getLinkDB(DB_ENV, DB_H2);
+        var filename = getSqlFile(urlDb, SQL_FILE, SQL_FILE_H2);
         var createTable = readResourceFile(filename, App.class);
+
+        HikariConfig hikari = new HikariConfig();
+        hikari.setJdbcUrl(urlDb);
 
         HikariDataSource dataSource = new HikariDataSource(hikari);
         BaseRepository.dataSource = dataSource;

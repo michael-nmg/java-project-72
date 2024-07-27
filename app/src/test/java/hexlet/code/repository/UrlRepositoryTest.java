@@ -53,7 +53,7 @@ class UrlRepositoryTest {
     @Test
     void findById() throws SQLException {
         var id = URL1.getId();
-        var actual = UrlRepository.findById(id).orElse(null);
+        var actual = UrlRepository.find(id).orElse(null);
         assertNotNull(actual);
         assertEquals(URL1, actual);
     }
@@ -61,7 +61,7 @@ class UrlRepositoryTest {
     @Test
     void findByName() throws SQLException {
         var name = URL1.getName();
-        var actual = UrlRepository.findByName(name).orElse(null);
+        var actual = UrlRepository.find(name).orElse(null);
         assertNotNull(actual);
         assertEquals(URL1, actual);
     }
@@ -69,7 +69,7 @@ class UrlRepositoryTest {
     @Test
     void findByNameEmpty() throws SQLException {
         var name = "name";
-        var actual = UrlRepository.findByName(name).isEmpty();
+        var actual = UrlRepository.find(name).isEmpty();
         assertTrue(actual);
     }
 

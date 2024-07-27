@@ -11,11 +11,15 @@ import java.sql.SQLException;
 
 public class UrlRepository extends BaseRepository {
 
-    public static Long save(Url url) throws SQLException {
-        var query = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+    private static final String TIME_COLUMN = "created_at";
+    private static final String GET_ALL = "SELECT id, name, created_at FROM urls";
+    private static final String INSERT = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+    private static final String GET_BY_ID = "SELECT id, name, created_at FROM urls WHERE id = ?";
+    private static final String GET_BY_NAME = "SELECT id, name, created_at FROM urls WHERE name = ?";
 
+    public static Long save(Url url) throws SQLException {
         try (var connection = dataSource.getConnection();
-             var state = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+             var state = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             var timestamp = url.getCreatedAt();
             state.setString(1, url.getName());
             state.setTimestamp(2, timestamp);
@@ -32,16 +36,14 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> findByName(String name) throws SQLException {
-        var query = "SELECT id, name, created_at FROM urls WHERE name = ?";
-
+    public static Optional<Url> find(String name) throws SQLException {
         try (var connection = dataSource.getConnection();
-             var state = connection.prepareStatement(query)) {
+             var state = connection.prepareStatement(GET_BY_NAME)) {
             state.setString(1, name);
             var result = state.executeQuery();
             if (result.next()) {
                 var id = result.getLong("id");
-                var createdAt = result.getTimestamp("created_at");
+                var createdAt = result.getTimestamp(TIME_COLUMN);
                 var url = new Url(id, name, createdAt);
                 return Optional.of(url);
             }
@@ -49,16 +51,14 @@ public class UrlRepository extends BaseRepository {
         return Optional.empty();
     }
 
-    public static Optional<Url> findById(Long id) throws SQLException {
-        var query = "SELECT id, name, created_at FROM urls WHERE id = ?";
-
+    public static Optional<Url> find(Long id) throws SQLException {
         try (var connection = dataSource.getConnection();
-             var state = connection.prepareStatement(query)) {
+             var state = connection.prepareStatement(GET_BY_ID)) {
             state.setLong(1, id);
             var result = state.executeQuery();
             if (result.next()) {
                 var name = result.getString("name");
-                var createdAt = result.getTimestamp("created_at");
+                var createdAt = result.getTimestamp(TIME_COLUMN);
                 var url = new Url(id, name, createdAt);
                 return Optional.of(url);
             }
@@ -67,17 +67,15 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static List<Url> getAll() throws SQLException {
-        var query = "SELECT id, name, created_at FROM urls";
-
         try (var connection = dataSource.getConnection();
-             var state = connection.prepareStatement(query)) {
+             var state = connection.prepareStatement(GET_ALL)) {
             var result = state.executeQuery();
             List<Url> urls = new ArrayList<>();
 
             while (result.next()) {
                 var id = result.getLong("id");
                 var name = result.getString("name");
-                var createdAt = result.getTimestamp("created_at");
+                var createdAt = result.getTimestamp(TIME_COLUMN);
                 var url = new Url(id, name, createdAt);
                 urls.add(url);
             }

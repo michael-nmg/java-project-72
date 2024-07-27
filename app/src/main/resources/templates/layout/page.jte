@@ -4,6 +4,7 @@
 @param Content content
 @param BasePage page = null
 
+
 <!doctype html>
 <html lang="en, ru">
 
@@ -14,6 +15,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
           crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -36,20 +40,18 @@
     </div>
 </nav>
 
-<div class="d-flex flex-column">
+<main class="flex-grow-1">
     @if (page != null && page.getFlash() != null)
-        <div class="alert alert-${page.getAlertStatus()} alert-dismissible fade show" role="alert">
-            <strong>${page.getFlash()}</strong>
+        <div class="rounded-0 m-0 alert alert-${page.getAlertStatus()} alert-dismissible fade show" role="alert">
+            <p>
+                <strong>${page.getFlash()}</strong>
+            </p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-</div>
 
-<main class="flex-grow-1">
     <section>
-        <div class="d-flex flex-column">
-            ${content}
-        </div>
+        ${content}
     </section>
 </main>
 
@@ -60,10 +62,6 @@
         </div>
     </div>
 </footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
 
 </body>
 </html>

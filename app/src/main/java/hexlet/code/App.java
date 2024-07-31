@@ -1,24 +1,25 @@
 package hexlet.code;
 
+import hexlet.code.util.RoutNames;
+import hexlet.code.controller.UrlController;
 import hexlet.code.controller.RootController;
-import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.controller.UrlCheckController;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import io.javalin.Javalin;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+
+import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import lombok.extern.slf4j.Slf4j;
-
-import hexlet.code.util.RoutNames;
 
 import static hexlet.code.util.Util.getPort;
 import static hexlet.code.util.Util.getLinkDB;
@@ -60,10 +61,11 @@ public class App {
         });
 
         app.get(RoutNames.rootPath(), RootController::index);
-        app.get(RoutNames.urlsPath(), UrlsController::index);
-        app.get(RoutNames.urlPath("{id}"), UrlsController::show);
+        app.get(RoutNames.urlsPath(), UrlController::index);
+        app.get(RoutNames.urlPath("{id}"), UrlController::show);
 
-        app.post(RoutNames.urlsPath(), UrlsController::save);
+        app.post(RoutNames.urlsPath(), UrlController::save);
+        app.post(RoutNames.urlCheckPath("{id}"), UrlCheckController::save);
         return app;
     }
 

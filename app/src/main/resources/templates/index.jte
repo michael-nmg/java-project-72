@@ -9,7 +9,7 @@ content = @`
         <div class="row">
             <div class="col-md-10 col-lg-8 mx-auto text-white">
 
-                <h4 class="display-3 mb-0">Links analyzer</h4>
+                <h5 class="display-3 mb-0">Webpage analyzer</h5>
                 <p class="lead">Check for SEO</p>
 
                 <form action="/urls" method="POST" class="rss-form text-body">

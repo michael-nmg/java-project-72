@@ -1,5 +1,5 @@
-@import hexlet.code.dto.urls.UrlsPage
 @import hexlet.code.util.RoutNames
+@import hexlet.code.dto.urls.UrlsPage
 @import static hexlet.code.util.Util.timestampToString
 @param UrlsPage page
 
@@ -8,7 +8,7 @@
 page = page,
 content = @`
     <div class="container-lg mt-5">
-        <h3>Links</h3>
+        <h3>Webpages</h3>
         <div class="table-responsive">
             <table class="table table-striped table-sm">
                 <thead>
@@ -26,8 +26,17 @@ content = @`
                         <td>
                             <a href="${RoutNames.urlPath(url.getId())}">${url.getName()}</a>
                         </td>
-                        <td>${timestampToString(url.getCreatedAt())}</td>
-                        <td>200</td>
+                        !{var checks = page.getUrlsLastCheck();}
+                        @if (checks != null)
+                            !{var last = checks.get(url.getId());}
+                            @if (last != null)
+                                <td>${timestampToString(last.getCreatedAt())}</td>
+                                <td>${last.getStatusCode()}</td>
+                            @else
+                                <td>-</td>
+                                <td>-</td>
+                            @endif
+                        @endif
                     </tr>
                 @endfor
                 </tbody>

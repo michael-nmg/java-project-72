@@ -3,6 +3,7 @@ package hexlet.code.model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.List;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -12,10 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class UrlTest {
 
     private static Url url;
+    private static final List<UrlCheck> CHECKS = List.of(new UrlCheck());
 
     @BeforeEach
     public void init() {
-        url = new Url(1L, "name", Timestamp.valueOf(LocalDateTime.MIN));
+        url = new Url(1L, "name", Timestamp.valueOf(LocalDateTime.MIN), CHECKS);
     }
 
     @Test
@@ -33,6 +35,12 @@ class UrlTest {
         var expected = Timestamp.valueOf(LocalDateTime.MIN);
         var actual = url.getCreatedAt();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void getChecks() {
+        List<UrlCheck> actual = url.getChecks();
+        assertEquals(CHECKS, actual);
     }
 
     @Test
@@ -55,6 +63,12 @@ class UrlTest {
     }
 
     @Test
+    void setChecks() {
+        url.setChecks(List.of(new UrlCheck()));
+        assertEquals(CHECKS, url.getChecks());
+    }
+
+    @Test
     void equalsBySelf() {
         assertEquals(url, url);
     }
@@ -69,7 +83,7 @@ class UrlTest {
     @Test
     void hashCodeEquals() {
         var createdAt = Timestamp.valueOf(LocalDateTime.MIN);
-        var actual = new Url(1L, "name", createdAt).hashCode();
+        var actual = new Url(1L, "name", createdAt, List.of(new UrlCheck())).hashCode();
         var expected = url.hashCode();
         assertEquals(expected, actual);
     }
